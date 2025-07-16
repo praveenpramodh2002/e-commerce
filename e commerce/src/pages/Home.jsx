@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { FaSteam, FaPlaystation, FaXbox, FaApple, FaGamepad, FaTrophy, FaUsers, FaHeadset, FaSearch, FaUserCircle, FaTwitter, FaDiscord, FaYoutube, FaTwitch } from 'react-icons/fa';
+import { FaSteam, FaPlaystation, FaXbox, FaApple, FaGamepad, FaTrophy, FaUsers, FaHeadset, FaSearch, FaUserCircle, FaTwitter, FaDiscord, FaYoutube, FaTwitch, FaStar, FaRegStar, FaTags, FaRocket, FaPuzzlePiece, FaHeart } from 'react-icons/fa';
+import g1 from '../images/g1.jpeg';
+import g2 from '../images/g2.jpeg';
+import g3 from '../images/g3.jpeg';
+import g4 from '../images/g4.jpeg';
+import g5 from '../images/g5.jpeg';
+import g6 from '../images/g6.jpeg';
+import g7 from '../images/g7.jpeg';
+import g8 from '../images/g8.jpeg';
 
 const heroImages = [
   "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=1470&q=80",
@@ -8,14 +16,67 @@ const heroImages = [
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80"
 ];
 
+const categories = [
+  { name: 'Action', icon: <FaRocket className="text-2xl text-purple-500" /> },
+  { name: 'Adventure', icon: <FaPuzzlePiece className="text-2xl text-pink-500" /> },
+  { name: 'Racing', icon: <FaTags className="text-2xl text-blue-400" /> },
+  { name: 'RPG', icon: <FaTrophy className="text-2xl text-yellow-400" /> },
+  { name: 'Strategy', icon: <FaUsers className="text-2xl text-green-400" /> },
+  { name: 'Indie', icon: <FaGamepad className="text-2xl text-red-400" /> },
+];
+
+const testimonials = [
+  {
+    name: 'Alex Johnson',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    text: 'GameHub is my go-to for discovering new games. The recommendations are always spot on!',
+    rating: 5,
+  },
+  {
+    name: 'Maria Lee',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    text: 'I love the community and the deals. The UI is super modern and easy to use.',
+    rating: 4,
+  },
+  {
+    name: 'Chris Evans',
+    avatar: 'https://randomuser.me/api/portraits/men/65.jpg',
+    text: 'The quick view feature is a game changer. I can check details without leaving the page!',
+    rating: 5,
+  },
+];
+
+const stats = [
+  { label: 'Happy Gamers', value: 12000 },
+  { label: 'Games Listed', value: 3500 },
+  { label: 'Reviews', value: 8700 },
+  { label: 'Active Deals', value: 120 },
+];
+
 const Home = () => {
   const [currentImage, setCurrentImage] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [modalGame, setModalGame] = useState(null);
+  const [statCounts, setStatCounts] = useState(stats.map(() => 0));
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % heroImages.length);
     }, 4000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Animate stats
+    const intervals = stats.map((stat, i) => setInterval(() => {
+      setStatCounts((prev) => {
+        const next = [...prev];
+        if (next[i] < stat.value) next[i] += Math.ceil(stat.value / 50);
+        if (next[i] > stat.value) next[i] = stat.value;
+        return next;
+      });
+    }, 30));
+    return () => intervals.forEach(clearInterval);
   }, []);
 
   const featuredGames = [
@@ -52,7 +113,7 @@ const Home = () => {
       genre: "Racing",
       price: "$44.99",
       discount: "$24.99",
-      image: "https://images.unsplash.com/photo-1549317661-bd32b8e9b929?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+      image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1470&q=80",
       platforms: [<FaSteam key="steam" />, <FaPlaystation key="ps" />, <FaXbox key="xbox" />, <FaApple key="apple" />]
     }
   ];
@@ -129,22 +190,24 @@ const Home = () => {
 
       {/* Featured Games */}
       <section className="container mx-auto px-6 py-16">
-        <div className="flex justify-between items-center mb-12">
-          <h2 className="text-3xl font-bold">Featured <span className="text-purple-500">Games</span></h2>
-          <a href="#" className="text-purple-400 hover:text-purple-300 transition">View All</a>
+        <div className="mb-12 flex flex-col items-center">
+          <h2 className="text-3xl font-bold text-center">Featured <span className="text-purple-500">Games</span></h2>
+          <a href="#" className="text-purple-400 hover:text-purple-300 transition mt-2">View All</a>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {featuredGames.map(game => (
-            <div key={game.id} className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300">
+            <div key={game.id} className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300 relative">
               <div className="relative">
                 <img src={game.image} alt={game.title} className="w-full h-48 object-cover" />
                 <div className="absolute top-2 right-2 bg-purple-600 px-2 py-1 rounded-md text-sm font-bold">
                   -{Math.round((parseFloat(game.price.substring(1)) - parseFloat(game.discount.substring(1))) / parseFloat(game.price.substring(1)) * 100)}%
                 </div>
+                <button onClick={() => { setModalGame(game); setShowModal(true); }} className="absolute bottom-2 right-2 bg-pink-600 hover:bg-pink-700 text-white px-3 py-1 rounded text-xs font-semibold shadow-lg">Quick View</button>
+                <button className="absolute bottom-2 left-2 bg-gray-700 hover:bg-gray-800 text-pink-400 px-2 py-1 rounded-full text-lg"><FaHeart /></button>
               </div>
               <div className="p-4">
-                <h3 className="text-xl font-bold mb-1">{game.title}</h3>
+                <h3 className="text-xl font-bold mb-1 text-center">{game.title}</h3>
                 <p className="text-gray-400 text-sm mb-3">{game.genre}</p>
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-1 text-gray-400">
@@ -157,6 +220,38 @@ const Home = () => {
                     <span className="font-bold">{game.discount}</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* New Games Section */}
+      <section className="container mx-auto px-6 py-16">
+        <div className="mb-12 flex flex-col items-center">
+          <h2 className="text-3xl font-bold text-center">New <span className="text-pink-500">Games</span></h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          {/* Game cards with local images */}
+          {[
+            { name: 'Night Arena', genre: 'Party, Arcade', image: g1, rating: 5 },
+            { name: 'Dota Legends', genre: 'MOBA, Esports', image: g2, rating: 4 },
+            { name: 'Spider Hero', genre: 'Action, Adventure', image: g3, rating: 5 },
+            { name: 'Neon Road', genre: 'Sports, Racing', image: g4, rating: 4 },
+            { name: 'Retro Racer', genre: 'Racing, Retro', image: g5, rating: 5 },
+            { name: 'Shadowfall', genre: 'Action, Stealth', image: g6, rating: 3 },
+            { name: 'Velocity Rush', genre: 'Racing, Arcade', image: g7, rating: 4 },
+            { name: 'Ironclad Tactics', genre: 'Strategy, Tactics', image: g8, rating: 4 },
+          ].map((game, idx) => (
+            <div key={game.name} className="bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-105 transition flex flex-col">
+              <img src={game.image} alt={game.name} className="w-full h-48 object-cover" />
+              <div className="p-4 flex-1 flex flex-col">
+                <h3 className="text-lg font-bold mb-1 text-center">{game.name}</h3>
+                <p className="text-gray-400 text-xs mb-2">{game.genre}</p>
+                <div className="flex mb-3">
+                  {[...Array(5)].map((_, i) => i < game.rating ? <FaStar key={i} className="text-yellow-400 text-sm" /> : <FaRegStar key={i} className="text-gray-500 text-sm" />)}
+                </div>
+                <button className="mt-auto bg-pink-600 hover:bg-pink-700 px-3 py-1 rounded font-medium w-full transition text-sm">View Details</button>
               </div>
             </div>
           ))}
@@ -208,6 +303,80 @@ const Home = () => {
           </button>
         </div>
       </section>
+
+      {/* Product Categories Grid */}
+      <section className="container mx-auto px-6 py-16">
+        <h2 className="text-3xl font-bold mb-10 text-center">Browse by <span className="text-purple-500">Category</span></h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+          {categories.map((cat) => (
+            <div key={cat.name} className="flex flex-col items-center bg-gray-800 rounded-lg p-6 shadow hover:scale-105 transition cursor-pointer">
+              {cat.icon}
+              <span className="mt-3 font-semibold text-lg">{cat.name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Animated Statistics */}
+      <section className="container mx-auto px-6 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {stats.map((stat, i) => (
+            <div key={stat.label} className="bg-gray-800 rounded-lg py-8 shadow">
+              <div className="text-4xl font-extrabold text-purple-400 mb-2">{statCounts[i]}</div>
+              <div className="text-lg font-medium text-gray-300">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Customer Testimonials */}
+      <section className="bg-gradient-to-r from-purple-900/60 to-pink-900/60 py-16">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-10">What Our <span className="text-pink-400">Gamers</span> Say</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((t) => (
+              <div key={t.name} className="bg-gray-900/80 rounded-lg p-8 flex flex-col items-center shadow-lg">
+                <img src={t.avatar} alt={t.name} className="w-20 h-20 rounded-full mb-4 border-4 border-purple-500" />
+                <p className="text-lg italic mb-4">"{t.text}"</p>
+                <div className="flex mb-2">
+                  {[...Array(5)].map((_, i) => i < t.rating ? <FaStar key={i} className="text-yellow-400" /> : <FaRegStar key={i} className="text-gray-500" />)}
+                </div>
+                <span className="font-semibold">{t.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Signup with Animation */}
+      <section className="py-16 bg-gray-800">
+        <div className="container mx-auto px-6 flex flex-col items-center">
+          <h2 className="text-3xl font-bold mb-4">Stay Updated!</h2>
+          <p className="mb-6 text-lg text-gray-300 text-center">Subscribe to our newsletter for the latest news and exclusive deals.</p>
+          <form className="flex flex-col sm:flex-row items-center w-full max-w-md animate-bounceIn">
+            <input type="email" placeholder="Your email address" className="flex-1 bg-gray-700 rounded-l-full px-6 py-3 text-white focus:outline-none" />
+            <button type="submit" className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-r-full font-medium transition">Subscribe</button>
+          </form>
+        </div>
+      </section>
+
+      {/* Quick View Modal for Products */}
+      {showModal && modalGame && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-gray-900 rounded-lg p-8 max-w-md w-full relative animate-fadeIn">
+            <button onClick={() => setShowModal(false)} className="absolute top-2 right-2 text-gray-400 hover:text-pink-400 text-2xl">&times;</button>
+            <img src={modalGame.image} alt={modalGame.title} className="w-full h-40 object-cover rounded mb-4" />
+            <h3 className="text-2xl font-bold mb-2">{modalGame.title}</h3>
+            <p className="text-gray-400 mb-2">{modalGame.genre}</p>
+            <div className="flex space-x-2 mb-2">{modalGame.platforms}</div>
+            <div className="mb-4">
+              <span className="line-through text-gray-500 mr-2">{modalGame.price}</span>
+              <span className="font-bold text-lg">{modalGame.discount}</span>
+            </div>
+            <button className="bg-pink-600 hover:bg-pink-700 px-6 py-2 rounded font-medium w-full">Add to Cart</button>
+          </div>
+        </div>
+      )}
 
       {/* Advanced Footer */}
       <footer className="bg-gradient-to-r from-gray-950 to-purple-950 py-12 border-t border-gray-800 mt-20">
