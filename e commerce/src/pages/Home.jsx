@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { FaSteam, FaPlaystation, FaXbox, FaApple, FaGamepad, FaTrophy, FaUsers, FaHeadset, FaSearch, FaUserCircle, FaTwitter, FaDiscord, FaYoutube, FaTwitch, FaStar, FaRegStar, FaTags, FaRocket, FaPuzzlePiece, FaHeart } from 'react-icons/fa';
+import { FaSteam, FaPlaystation, FaXbox, FaApple, FaGamepad, FaTrophy, FaUsers, FaHeadset, FaSearch, FaUserCircle, FaTwitter, FaDiscord, FaYoutube, FaTwitch, FaStar, FaRegStar, FaTags, FaRocket, FaPuzzlePiece, FaHeart, FaShoppingCart } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import g1 from '../images/g1.jpeg';
 import g2 from '../images/g2.jpeg';
 import g3 from '../images/g3.jpeg';
@@ -8,6 +9,7 @@ import g5 from '../images/g5.jpeg';
 import g6 from '../images/g6.jpeg';
 import g7 from '../images/g7.jpeg';
 import g8 from '../images/g8.jpeg';
+import gamingBgVideo from '../Video/intro.mp4';
 
 const heroImages = [
   "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=1470&q=80",
@@ -58,6 +60,15 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalGame, setModalGame] = useState(null);
   const [statCounts, setStatCounts] = useState(stats.map(() => 0));
+  // Add state for payment modal
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedGame, setSelectedGame] = useState(null);
+  // Add state for payment form validation
+  const [paymentErrors, setPaymentErrors] = useState({});
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  // Add cart state
+  const [cart, setCart] = useState([]);
+  const [showCartModal, setShowCartModal] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -151,10 +162,22 @@ const Home = () => {
               />
               <FaSearch className="absolute left-3 top-2.5 text-gray-400" />
             </div>
-            <button className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full font-medium transition">
+            <Link
+              to="/login"
+              className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-full font-medium transition"
+            >
               <FaUserCircle className="text-xl mr-1" />
               <span>Sign In</span>
-            </button>
+            </Link>
+            {/* In the navbar, make cart icon clickable */}
+            <div className="relative ml-2">
+              <button onClick={() => setShowCartModal(true)} className="focus:outline-none">
+                <FaShoppingCart className="text-2xl text-pink-400" />
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-2 py-0.5 font-bold">{cart.length}</span>
+                )}
+              </button>
+            </div>
           </div>
         </nav>
       </header>
@@ -189,40 +212,47 @@ const Home = () => {
       </section>
 
       {/* Featured Games */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="mb-12 flex flex-col items-center">
-          <h2 className="text-3xl font-bold text-center">Featured <span className="text-purple-500">Games</span></h2>
-          <a href="#" className="text-purple-400 hover:text-purple-300 transition mt-2">View All</a>
+      {/* In the Featured Games section, add advanced background */}
+      <section className="relative container mx-auto px-6 py-16 overflow-hidden">
+        {/* Advanced SVG/gradient background */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <div className="w-full h-full bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/80 absolute inset-0" />
+          <svg className="absolute opacity-20 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 320"><path fill="#a78bfa" fillOpacity="0.18" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,133.3C840,107,960,85,1080,101.3C1200,117,1320,171,1380,197.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuredGames.map(game => (
-            <div key={game.id} className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300 relative">
-              <div className="relative">
-                <img src={game.image} alt={game.title} className="w-full h-48 object-cover" />
-                <div className="absolute top-2 right-2 bg-purple-600 px-2 py-1 rounded-md text-sm font-bold">
-                  -{Math.round((parseFloat(game.price.substring(1)) - parseFloat(game.discount.substring(1))) / parseFloat(game.price.substring(1)) * 100)}%
-                </div>
-                <button onClick={() => { setModalGame(game); setShowModal(true); }} className="absolute bottom-2 right-2 bg-pink-600 hover:bg-pink-700 text-white px-3 py-1 rounded text-xs font-semibold shadow-lg">Quick View</button>
-                <button className="absolute bottom-2 left-2 bg-gray-700 hover:bg-gray-800 text-pink-400 px-2 py-1 rounded-full text-lg"><FaHeart /></button>
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold mb-1 text-center">{game.title}</h3>
-                <p className="text-gray-400 text-sm mb-3">{game.genre}</p>
-                <div className="flex justify-between items-center">
-                  <div className="flex space-x-1 text-gray-400">
-                    {game.platforms.map((platform, index) => (
-                      <span key={index} className="hover:text-white transition">{platform}</span>
-                    ))}
+        <div className="relative z-10">
+          <div className="mb-12 flex flex-col items-center">
+            <h2 className="text-3xl font-bold text-center">Featured <span className="text-purple-500">Games</span></h2>
+            <a href="#" className="text-purple-400 hover:text-purple-300 transition mt-2">View All</a>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredGames.map(game => (
+              <div key={game.id} className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300 relative">
+                <div className="relative">
+                  <img src={game.image} alt={game.title} className="w-full h-48 object-cover" />
+                  <div className="absolute top-2 right-2 bg-purple-600 px-2 py-1 rounded-md text-sm font-bold">
+                    -{Math.round((parseFloat(game.price.substring(1)) - parseFloat(game.discount.substring(1))) / parseFloat(game.price.substring(1)) * 100)}%
                   </div>
-                  <div>
-                    <span className="line-through text-gray-500 mr-2">{game.price}</span>
-                    <span className="font-bold">{game.discount}</span>
+                  <button onClick={() => { setModalGame(game); setShowModal(true); }} className="absolute bottom-2 right-2 bg-pink-600 hover:bg-pink-700 text-white px-3 py-1 rounded text-xs font-semibold shadow-lg">Quick View</button>
+                  <button className="absolute bottom-2 left-2 bg-gray-700 hover:bg-gray-800 text-pink-400 px-2 py-1 rounded-full text-lg"><FaHeart /></button>
+                </div>
+                <div className="p-4">
+                  <h3 className="text-xl font-bold mb-1 text-center">{game.title}</h3>
+                  <p className="text-gray-400 text-sm mb-3">{game.genre}</p>
+                  <div className="flex justify-between items-center">
+                    <div className="flex space-x-1 text-gray-400">
+                      {game.platforms.map((platform, index) => (
+                        <span key={index} className="hover:text-white transition">{platform}</span>
+                      ))}
+                    </div>
+                    <div>
+                      <span className="line-through text-gray-500 mr-2">{game.price}</span>
+                      <span className="font-bold">{game.discount}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
@@ -234,24 +264,39 @@ const Home = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Game cards with local images */}
           {[
-            { name: 'Night Arena', genre: 'Party, Arcade', image: g1, rating: 5 },
-            { name: 'Dota Legends', genre: 'MOBA, Esports', image: g2, rating: 4 },
-            { name: 'Spider Hero', genre: 'Action, Adventure', image: g3, rating: 5 },
-            { name: 'Neon Road', genre: 'Sports, Racing', image: g4, rating: 4 },
-            { name: 'Retro Racer', genre: 'Racing, Retro', image: g5, rating: 5 },
-            { name: 'Shadowfall', genre: 'Action, Stealth', image: g6, rating: 3 },
-            { name: 'Velocity Rush', genre: 'Racing, Arcade', image: g7, rating: 4 },
-            { name: 'Ironclad Tactics', genre: 'Strategy, Tactics', image: g8, rating: 4 },
+            { name: 'Night Arena', genre: 'Party, Arcade', image: g1, rating: 5, price: '$29.99' },
+            { name: 'Dota Legends', genre: 'MOBA, Esports', image: g2, rating: 4, price: '$39.99' },
+            { name: 'Spider Hero', genre: 'Action, Adventure', image: g3, rating: 5, price: '$49.99' },
+            { name: 'Neon Road', genre: 'Sports, Racing', image: g4, rating: 4, price: '$34.99' },
+            { name: 'Retro Racer', genre: 'Racing, Retro', image: g5, rating: 5, price: '$19.99' },
+            { name: 'Shadowfall', genre: 'Action, Stealth', image: g6, rating: 3, price: '$24.99' },
+            { name: 'Velocity Rush', genre: 'Racing, Arcade', image: g7, rating: 4, price: '$27.99' },
+            { name: 'Ironclad Tactics', genre: 'Strategy, Tactics', image: g8, rating: 4, price: '$31.99' },
           ].map((game, idx) => (
             <div key={game.name} className="bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-105 transition flex flex-col">
               <img src={game.image} alt={game.name} className="w-full h-48 object-cover" />
               <div className="p-4 flex-1 flex flex-col">
                 <h3 className="text-lg font-bold mb-1 text-center">{game.name}</h3>
+                <p className="text-pink-400 text-base font-semibold text-center mb-1">{game.price}</p>
                 <p className="text-gray-400 text-xs mb-2">{game.genre}</p>
-                <div className="flex mb-3">
+                <div className="flex mb-3 justify-center">
                   {[...Array(5)].map((_, i) => i < game.rating ? <FaStar key={i} className="text-yellow-400 text-sm" /> : <FaRegStar key={i} className="text-gray-500 text-sm" />)}
                 </div>
-                <button className="mt-auto bg-pink-600 hover:bg-pink-700 px-3 py-1 rounded font-medium w-full transition text-sm">View Details</button>
+                <div className="mt-auto flex flex-col gap-2">
+                  <button className="bg-pink-600 hover:bg-pink-700 px-3 py-1 rounded font-medium w-full transition text-sm mb-1">View Details</button>
+                  <button
+                    className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded font-medium w-full transition text-sm"
+                    onClick={() => { setSelectedGame(game); setShowPaymentModal(true); }}
+                  >
+                    Buy Now
+                  </button>
+                  <button
+                    className="bg-purple-500 hover:bg-purple-700 px-3 py-1 rounded font-medium w-full transition text-sm"
+                    onClick={() => setCart(prev => prev.find(item => item.name === game.name) ? prev : [...prev, game])}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -259,10 +304,15 @@ const Home = () => {
       </section>
 
       {/* Features */}
-      <section className="bg-gray-800 py-16">
-        <div className="container mx-auto px-6">
+      {/* In the Why Choose GameHub section, add advanced background */}
+      <section className="relative bg-gray-800 py-16 overflow-hidden">
+        {/* Advanced SVG/gradient background */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <div className="w-full h-full bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/80 absolute inset-0" />
+          <svg className="absolute opacity-20 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 320"><path fill="#ec4899" fillOpacity="0.2" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,133.3C840,107,960,85,1080,101.3C1200,117,1320,171,1380,197.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+        </div>
+        <div className="container mx-auto px-6 relative z-10">
           <h2 className="text-3xl font-bold text-center mb-16">Why Choose <span className="text-purple-500">GameHub</span></h2>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center">
               <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -271,7 +321,6 @@ const Home = () => {
               <h3 className="text-xl font-bold mb-2">Curated Selection</h3>
               <p className="text-gray-400">We handpick only the best games from all genres and platforms to ensure quality.</p>
             </div>
-            
             <div className="text-center">
               <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <FaUsers className="text-purple-400 text-2xl" />
@@ -279,7 +328,6 @@ const Home = () => {
               <h3 className="text-xl font-bold mb-2">Community Driven</h3>
               <p className="text-gray-400">Join our vibrant community of gamers to share experiences and get recommendations.</p>
             </div>
-            
             <div className="text-center">
               <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                 <FaHeadset className="text-purple-400 text-2xl" />
@@ -291,44 +339,65 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-purple-900/50 to-pink-900/50">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Start Your Gaming Journey?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-300">
-            Join thousands of gamers who discover, play, and share their favorite games every day.
-          </p>
-          <button className="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-md font-medium text-lg transition">
-            Create Free Account
-          </button>
-        </div>
-      </section>
+     
 
-      {/* Product Categories Grid */}
+      
+{/* Add About section above the footer */}
+<section className="relative container mx-auto px-6 py-16 overflow-hidden">
+  {/* Advanced SVG/gradient background */}
+  <div className="absolute inset-0 w-full h-full z-0">
+    <div className="w-full h-full bg-gradient-to-br from-pink-900/80 via-gray-900/80 to-purple-900/80 absolute inset-0" />
+    <svg className="absolute opacity-20 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 320"><path fill="#a78bfa" fillOpacity="0.18" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,133.3C840,107,960,85,1080,101.3C1200,117,1320,171,1380,197.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+  </div>
+  <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
+    <div className="flex-1">
+      <h2 className="text-3xl font-bold mb-4 text-purple-500">About GameHub</h2>
+      <p className="text-lg text-gray-300 mb-4">GameHub is your ultimate destination for discovering, playing, and sharing the best games across all platforms. We are passionate about building a vibrant gaming community and providing curated selections, exclusive deals, and 24/7 support for gamers worldwide.</p>
+      <ul className="list-disc list-inside text-gray-400 mb-4">
+        <li>Curated game collections</li>
+        <li>Community-driven reviews</li>
+        <li>Exclusive offers and events</li>
+        <li>Modern, user-friendly experience</li>
+      </ul>
+    </div>
+    <div className="flex-1 flex justify-center">
+      <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80" alt="About GameHub" className="rounded-2xl shadow-lg w-80 h-64 object-cover" />
+    </div>
+  </div>
+</section>
+
+      {/* Add Contact Me section below About */}
       <section className="container mx-auto px-6 py-16">
-        <h2 className="text-3xl font-bold mb-10 text-center">Browse by <span className="text-purple-500">Category</span></h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
-          {categories.map((cat) => (
-            <div key={cat.name} className="flex flex-col items-center bg-gray-800 rounded-lg p-6 shadow hover:scale-105 transition cursor-pointer">
-              {cat.icon}
-              <span className="mt-3 font-semibold text-lg">{cat.name}</span>
-            </div>
-          ))}
+        <div className="max-w-xl mx-auto bg-gray-800 rounded-2xl shadow-lg p-8">
+          <h2 className="text-3xl font-bold text-center mb-6 text-pink-500">Contact Me</h2>
+          <form className="space-y-4" onSubmit={e => {
+            e.preventDefault();
+            const form = e.target;
+            const name = form.name.value.trim();
+            const email = form.email.value.trim();
+            const message = form.message.value.trim();
+            let error = '';
+            if (!name) error = 'Name is required.';
+            else if (!email || !/^\S+@\S+\.\S+$/.test(email)) error = 'Valid email is required.';
+            else if (!message) error = 'Message is required.';
+            if (error) {
+              form.querySelector('.contact-error').textContent = error;
+              form.querySelector('.contact-success').textContent = '';
+            } else {
+              form.querySelector('.contact-error').textContent = '';
+              form.querySelector('.contact-success').textContent = 'Thank you for contacting us!';
+              form.reset();
+            }
+          }}>
+            <input name="name" type="text" placeholder="Your Name" className="w-full border border-gray-600 rounded-lg px-4 py-2 bg-gray-900 text-white focus:ring-2 focus:ring-pink-400 focus:outline-none" />
+            <input name="email" type="email" placeholder="Your Email" className="w-full border border-gray-600 rounded-lg px-4 py-2 bg-gray-900 text-white focus:ring-2 focus:ring-pink-400 focus:outline-none" />
+            <textarea name="message" placeholder="Your Message" rows={4} className="w-full border border-gray-600 rounded-lg px-4 py-2 bg-gray-900 text-white focus:ring-2 focus:ring-pink-400 focus:outline-none"></textarea>
+            <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold py-3 rounded-lg shadow-lg text-lg transition">Send Message</button>
+            <div className="contact-error text-red-500 text-center mt-2 text-sm"></div>
+            <div className="contact-success text-green-500 text-center mt-2 text-sm"></div>
+          </form>
         </div>
       </section>
-
-      {/* Animated Statistics */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {stats.map((stat, i) => (
-            <div key={stat.label} className="bg-gray-800 rounded-lg py-8 shadow">
-              <div className="text-4xl font-extrabold text-purple-400 mb-2">{statCounts[i]}</div>
-              <div className="text-lg font-medium text-gray-300">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Customer Testimonials */}
       <section className="bg-gradient-to-r from-purple-900/60 to-pink-900/60 py-16">
         <div className="container mx-auto px-6">
@@ -348,17 +417,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Newsletter Signup with Animation */}
-      <section className="py-16 bg-gray-800">
-        <div className="container mx-auto px-6 flex flex-col items-center">
-          <h2 className="text-3xl font-bold mb-4">Stay Updated!</h2>
-          <p className="mb-6 text-lg text-gray-300 text-center">Subscribe to our newsletter for the latest news and exclusive deals.</p>
-          <form className="flex flex-col sm:flex-row items-center w-full max-w-md animate-bounceIn">
-            <input type="email" placeholder="Your email address" className="flex-1 bg-gray-700 rounded-l-full px-6 py-3 text-white focus:outline-none" />
-            <button type="submit" className="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-r-full font-medium transition">Subscribe</button>
-          </form>
-        </div>
-      </section>
+     
 
       {/* Quick View Modal for Products */}
       {showModal && modalGame && (
@@ -378,6 +437,147 @@ const Home = () => {
         </div>
       )}
 
+      {/* Payment Modal */}
+      {showPaymentModal && selectedGame && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-fadeIn text-gray-900 border border-gray-200">
+            <button onClick={() => setShowPaymentModal(false)} className="absolute top-2 right-2 text-gray-400 hover:text-pink-400 text-2xl">&times;</button>
+            <div className="flex flex-col items-center mb-6">
+              <img src={selectedGame.image} alt={selectedGame.name} className="w-24 h-24 object-cover rounded-lg mb-2 shadow" />
+              <h3 className="text-xl font-bold mb-1 text-center">{selectedGame.name}</h3>
+              <p className="text-pink-500 text-lg font-semibold mb-1">{selectedGame.price}</p>
+              <p className="text-gray-500 mb-2 text-center">{selectedGame.genre}</p>
+            </div>
+            <form
+              className="space-y-4"
+              onSubmit={e => {
+                e.preventDefault();
+                setPaymentSuccess(false);
+                const form = e.target;
+                const name = form.name.value.trim();
+                const email = form.email.value.trim();
+                const card = form.card.value.replace(/\s+/g, '');
+                const expiry = form.expiry.value.trim();
+                const cvv = form.cvv.value.trim();
+                const errors = {};
+                if (!name) errors.name = 'Name is required.';
+                if (!email || !/^\S+@\S+\.\S+$/.test(email)) errors.email = 'Valid email is required.';
+                if (!card || !/^\d{16,19}$/.test(card)) errors.card = 'Valid card number is required.';
+                if (!expiry || !/^(0[1-9]|1[0-2])\/(\d{2})$/.test(expiry)) errors.expiry = 'Expiry must be MM/YY.';
+                if (!cvv || !/^\d{3,4}$/.test(cvv)) errors.cvv = 'CVV must be 3 or 4 digits.';
+                setPaymentErrors(errors);
+                if (Object.keys(errors).length === 0) {
+                  setPaymentSuccess(true);
+                  form.reset();
+                  setCart(prev => prev.filter(g => g.name !== selectedGame.name));
+                  setTimeout(() => setShowPaymentModal(false), 1500);
+                }
+              }}
+            >
+              <div>
+                <label className="block text-sm font-semibold mb-1" htmlFor="name">Name on Card</label>
+                <input id="name" name="name" type="text" placeholder="Name on Card" className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-400 focus:outline-none ${paymentErrors.name ? 'border-red-500' : ''}`} required />
+                {paymentErrors.name && <div className="text-red-500 text-xs mt-1">{paymentErrors.name}</div>}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1" htmlFor="email">Email</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2.5 text-gray-400"><svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16 12H8m8 0a4 4 0 11-8 0 4 4 0 018 0z' /></svg></span>
+                  <input id="email" name="email" type="email" placeholder="Email" className={`w-full border border-gray-300 rounded-lg px-10 py-2 focus:ring-2 focus:ring-purple-400 focus:outline-none ${paymentErrors.email ? 'border-red-500' : ''}`} required />
+                </div>
+                {paymentErrors.email && <div className="text-red-500 text-xs mt-1">{paymentErrors.email}</div>}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1" htmlFor="card">Card Number</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-2.5 text-gray-400"><svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'><rect width='20' height='12' x='2' y='6' rx='2' /><path d='M2 10h20' /></svg></span>
+                  <input id="card" name="card" type="text" placeholder="Card Number" className={`w-full border border-gray-300 rounded-lg px-10 py-2 focus:ring-2 focus:ring-purple-400 focus:outline-none ${paymentErrors.card ? 'border-red-500' : ''}`} maxLength={19} required />
+                </div>
+                {paymentErrors.card && <div className="text-red-500 text-xs mt-1">{paymentErrors.card}</div>}
+              </div>
+              <div className="flex gap-2">
+                <div className="w-1/2">
+                  <label className="block text-sm font-semibold mb-1" htmlFor="expiry">MM/YY</label>
+                  <input id="expiry" name="expiry" type="text" placeholder="MM/YY" className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-400 focus:outline-none ${paymentErrors.expiry ? 'border-red-500' : ''}`} maxLength={5} required />
+                  {paymentErrors.expiry && <div className="text-red-500 text-xs mt-1">{paymentErrors.expiry}</div>}
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-sm font-semibold mb-1" htmlFor="cvv">CVV</label>
+                  <input id="cvv" name="cvv" type="text" placeholder="CVV" className={`w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-400 focus:outline-none ${paymentErrors.cvv ? 'border-red-500' : ''}`} maxLength={4} required />
+                  {paymentErrors.cvv && <div className="text-red-500 text-xs mt-1">{paymentErrors.cvv}</div>}
+                </div>
+              </div>
+              <button type="submit" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 rounded-lg shadow-lg text-lg transition">Pay Now</button>
+              {paymentSuccess && <div className="text-green-600 text-center font-semibold mt-2">Payment Successful!</div>}
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Cart Modal */}
+      {showCartModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full relative animate-fadeIn text-gray-900 border border-gray-200">
+            <button onClick={() => setShowCartModal(false)} className="absolute top-2 right-2 text-gray-400 hover:text-pink-400 text-2xl">&times;</button>
+            <h3 className="text-2xl font-bold mb-4 text-center">Your Cart</h3>
+            {cart.length === 0 ? (
+              <div className="text-center text-gray-500">Your cart is empty.</div>
+            ) : (
+              <>
+                <div className="space-y-4 mb-4">
+                  {cart.map((item, idx) => (
+                    <div key={item.name} className="flex items-center gap-4 border-b pb-3">
+                      <img src={item.image} alt={item.name} className="w-14 h-14 object-cover rounded" />
+                      <div className="flex-1">
+                        <div className="font-semibold">{item.name}</div>
+                        <div className="text-pink-500 font-bold">{item.price}</div>
+                      </div>
+                      <button
+                        className="text-red-500 hover:text-red-700 font-bold text-sm"
+                        onClick={() => setCart(cart.filter(g => g.name !== item.name))}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 rounded-lg shadow-lg text-lg transition mt-2"
+                  onClick={() => {
+                    setShowCartModal(false);
+                    setSelectedGame(cart[0]);
+                    setShowPaymentModal(true);
+                  }}
+                >
+                  Checkout
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+ {/* Call to Action */}
+      <section className="relative py-20">
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          src={gamingBgVideo}
+        />
+        {/* Content */}
+        <div className="container mx-auto px-6 text-center relative z-20">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Ready to Start Your Gaming Journey?</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-200">
+            Join thousands of gamers who discover, play, and share their favorite games every day.
+          </p>
+          <button className="bg-purple-600 hover:bg-purple-700 px-8 py-4 rounded-md font-medium text-lg transition text-white">
+            Create Free Account
+          </button>
+        </div>
+      </section>
       {/* Advanced Footer */}
       <footer className="bg-gradient-to-r from-gray-950 to-purple-950 py-12 border-t border-gray-800 mt-20">
         <div className="container mx-auto px-6">
@@ -435,6 +635,8 @@ const Home = () => {
           </div>
         </div>
       </footer>
+
+      
     </div>
   );
 };
