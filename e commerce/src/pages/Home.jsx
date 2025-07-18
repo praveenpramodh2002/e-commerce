@@ -222,7 +222,7 @@ const Home = () => {
         <div className="relative z-10">
           <div className="mb-12 flex flex-col items-center">
             <h2 className="text-3xl font-bold text-center">Featured <span className="text-purple-500">Games</span></h2>
-            <a href="#" className="text-purple-400 hover:text-purple-300 transition mt-2">View All</a>
+            <Link to="/games" className="text-purple-400 hover:text-purple-300 transition mt-2">View All</Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredGames.map(game => (
