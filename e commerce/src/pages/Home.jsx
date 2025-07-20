@@ -69,6 +69,8 @@ const Home = () => {
   // Add cart state
   const [cart, setCart] = useState([]);
   const [showCartModal, setShowCartModal] = useState(false);
+  // Add search state
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -129,6 +131,24 @@ const Home = () => {
     }
   ];
 
+  // Filtered games for Featured and New Games sections
+  const filteredFeaturedGames = featuredGames.filter(game =>
+    game.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  const newGamesList = [
+    { name: 'Night Arena', genre: 'Party, Arcade', image: g1, rating: 5, price: '$29.99' },
+    { name: 'Dota Legends', genre: 'MOBA, Esports', image: g2, rating: 4, price: '$39.99' },
+    { name: 'Spider Hero', genre: 'Action, Adventure', image: g3, rating: 5, price: '$49.99' },
+    { name: 'Neon Road', genre: 'Sports, Racing', image: g4, rating: 4, price: '$34.99' },
+    { name: 'Retro Racer', genre: 'Racing, Retro', image: g5, rating: 5, price: '$19.99' },
+    { name: 'Shadowfall', genre: 'Action, Stealth', image: g6, rating: 3, price: '$24.99' },
+    { name: 'Velocity Rush', genre: 'Racing, Arcade', image: g7, rating: 4, price: '$27.99' },
+    { name: 'Ironclad Tactics', genre: 'Strategy, Tactics', image: g8, rating: 4, price: '$31.99' },
+  ];
+  const filteredNewGames = newGamesList.filter(game =>
+    game.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Advanced Navigation Bar */}
@@ -158,6 +178,8 @@ const Home = () => {
               <input
                 type="text"
                 placeholder="Search games..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="bg-gray-800 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-400"
               />
               <FaSearch className="absolute left-3 top-2.5 text-gray-400" />
@@ -225,33 +247,37 @@ const Home = () => {
             <Link to="/games" className="text-purple-400 hover:text-purple-300 transition mt-2">View All</Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredGames.map(game => (
-              <div key={game.id} className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300 relative">
-                <div className="relative">
-                  <img src={game.image} alt={game.title} className="w-full h-48 object-cover" />
-                  <div className="absolute top-2 right-2 bg-purple-600 px-2 py-1 rounded-md text-sm font-bold">
-                    -{Math.round((parseFloat(game.price.substring(1)) - parseFloat(game.discount.substring(1))) / parseFloat(game.price.substring(1)) * 100)}%
-                  </div>
-                  <button onClick={() => { setModalGame(game); setShowModal(true); }} className="absolute bottom-2 right-2 bg-pink-600 hover:bg-pink-700 text-white px-3 py-1 rounded text-xs font-semibold shadow-lg">Quick View</button>
-                  <button className="absolute bottom-2 left-2 bg-gray-700 hover:bg-gray-800 text-pink-400 px-2 py-1 rounded-full text-lg"><FaHeart /></button>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-xl font-bold mb-1 text-center">{game.title}</h3>
-                  <p className="text-gray-400 text-sm mb-3">{game.genre}</p>
-                  <div className="flex justify-between items-center">
-                    <div className="flex space-x-1 text-gray-400">
-                      {game.platforms.map((platform, index) => (
-                        <span key={index} className="hover:text-white transition">{platform}</span>
-                      ))}
+            {filteredFeaturedGames.length === 0 ? (
+              <div className="col-span-full text-center text-gray-400">No games found.</div>
+            ) : (
+              filteredFeaturedGames.map(game => (
+                <div key={game.id} className="bg-gray-800 rounded-lg overflow-hidden hover:transform hover:scale-105 transition duration-300 relative">
+                  <div className="relative">
+                    <img src={game.image} alt={game.title} className="w-full h-48 object-cover" />
+                    <div className="absolute top-2 right-2 bg-purple-600 px-2 py-1 rounded-md text-sm font-bold">
+                      -{Math.round((parseFloat(game.price.substring(1)) - parseFloat(game.discount.substring(1))) / parseFloat(game.price.substring(1)) * 100)}%
                     </div>
-                    <div>
-                      <span className="line-through text-gray-500 mr-2">{game.price}</span>
-                      <span className="font-bold">{game.discount}</span>
+                    <button onClick={() => { setModalGame(game); setShowModal(true); }} className="absolute bottom-2 right-2 bg-pink-600 hover:bg-pink-700 text-white px-3 py-1 rounded text-xs font-semibold shadow-lg">Quick View</button>
+                    <button className="absolute bottom-2 left-2 bg-gray-700 hover:bg-gray-800 text-pink-400 px-2 py-1 rounded-full text-lg"><FaHeart /></button>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-xl font-bold mb-1 text-center">{game.title}</h3>
+                    <p className="text-gray-400 text-sm mb-3">{game.genre}</p>
+                    <div className="flex justify-between items-center">
+                      <div className="flex space-x-1 text-gray-400">
+                        {game.platforms.map((platform, index) => (
+                          <span key={index} className="hover:text-white transition">{platform}</span>
+                        ))}
+                      </div>
+                      <div>
+                        <span className="line-through text-gray-500 mr-2">{game.price}</span>
+                        <span className="font-bold">{game.discount}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -263,43 +289,38 @@ const Home = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Game cards with local images */}
-          {[
-            { name: 'Night Arena', genre: 'Party, Arcade', image: g1, rating: 5, price: '$29.99' },
-            { name: 'Dota Legends', genre: 'MOBA, Esports', image: g2, rating: 4, price: '$39.99' },
-            { name: 'Spider Hero', genre: 'Action, Adventure', image: g3, rating: 5, price: '$49.99' },
-            { name: 'Neon Road', genre: 'Sports, Racing', image: g4, rating: 4, price: '$34.99' },
-            { name: 'Retro Racer', genre: 'Racing, Retro', image: g5, rating: 5, price: '$19.99' },
-            { name: 'Shadowfall', genre: 'Action, Stealth', image: g6, rating: 3, price: '$24.99' },
-            { name: 'Velocity Rush', genre: 'Racing, Arcade', image: g7, rating: 4, price: '$27.99' },
-            { name: 'Ironclad Tactics', genre: 'Strategy, Tactics', image: g8, rating: 4, price: '$31.99' },
-          ].map((game, idx) => (
-            <div key={game.name} className="bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-105 transition flex flex-col">
-              <img src={game.image} alt={game.name} className="w-full h-48 object-cover" />
-              <div className="p-4 flex-1 flex flex-col">
-                <h3 className="text-lg font-bold mb-1 text-center">{game.name}</h3>
-                <p className="text-pink-400 text-base font-semibold text-center mb-1">{game.price}</p>
-                <p className="text-gray-400 text-xs mb-2">{game.genre}</p>
-                <div className="flex mb-3 justify-center">
-                  {[...Array(5)].map((_, i) => i < game.rating ? <FaStar key={i} className="text-yellow-400 text-sm" /> : <FaRegStar key={i} className="text-gray-500 text-sm" />)}
-                </div>
-                <div className="mt-auto flex flex-col gap-2">
-                  <button className="bg-pink-600 hover:bg-pink-700 px-3 py-1 rounded font-medium w-full transition text-sm mb-1">View Details</button>
-                  <button
-                    className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded font-medium w-full transition text-sm"
-                    onClick={() => { setSelectedGame(game); setShowPaymentModal(true); }}
-                  >
-                    Buy Now
-                  </button>
-                  <button
-                    className="bg-purple-500 hover:bg-purple-700 px-3 py-1 rounded font-medium w-full transition text-sm"
-                    onClick={() => setCart(prev => prev.find(item => item.name === game.name) ? prev : [...prev, game])}
-                  >
-                    Add to Cart
-                  </button>
+          {filteredNewGames.length === 0 ? (
+            <div className="col-span-full text-center text-gray-400">No games found.</div>
+          ) : (
+            filteredNewGames.map((game, idx) => (
+              <div key={game.name} className="bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-105 transition flex flex-col">
+                <img src={game.image} alt={game.name} className="w-full h-48 object-cover" />
+                <div className="p-4 flex-1 flex flex-col">
+                  <h3 className="text-lg font-bold mb-1 text-center">{game.name}</h3>
+                  <p className="text-pink-400 text-base font-semibold text-center mb-1">{game.price}</p>
+                  <p className="text-gray-400 text-xs mb-2">{game.genre}</p>
+                  <div className="flex mb-3 justify-center">
+                    {[...Array(5)].map((_, i) => i < game.rating ? <FaStar key={i} className="text-yellow-400 text-sm" /> : <FaRegStar key={i} className="text-gray-500 text-sm" />)}
+                  </div>
+                  <div className="mt-auto flex flex-col gap-2">
+                    <button className="bg-pink-600 hover:bg-pink-700 px-3 py-1 rounded font-medium w-full transition text-sm mb-1">View Details</button>
+                    <button
+                      className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded font-medium w-full transition text-sm"
+                      onClick={() => { setSelectedGame(game); setShowPaymentModal(true); }}
+                    >
+                      Buy Now
+                    </button>
+                    <button
+                      className="bg-purple-500 hover:bg-purple-700 px-3 py-1 rounded font-medium w-full transition text-sm"
+                      onClick={() => setCart(prev => prev.find(item => item.name === game.name) ? prev : [...prev, game])}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
 
@@ -339,7 +360,7 @@ const Home = () => {
         </div>
       </section>
 
-     
+      
 
       
 {/* Add About section above the footer */}
@@ -417,7 +438,7 @@ const Home = () => {
         </div>
       </section>
 
-     
+      
 
       {/* Quick View Modal for Products */}
       {showModal && modalGame && (
