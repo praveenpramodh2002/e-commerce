@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaSteam, FaPlaystation, FaXbox, FaApple, FaGamepad, FaTrophy, FaUsers, FaHeadset, FaSearch, FaUserCircle, FaTwitter, FaDiscord, FaYoutube, FaTwitch, FaStar, FaRegStar, FaTags, FaRocket, FaPuzzlePiece, FaHeart, FaShoppingCart } from 'react-icons/fa';
+import { FaSteam, FaPlaystation, FaXbox, FaApple, FaGamepad, FaTrophy, FaUsers, FaHeadset, FaSearch, FaUserCircle, FaTwitter, FaDiscord, FaYoutube, FaTwitch, FaStar, FaRegStar, FaTags, FaRocket, FaPuzzlePiece, FaHeart, FaShoppingCart, FaEye, FaCreditCard } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import g1 from '../images/g1.jpeg';
 import g2 from '../images/g2.jpeg';
@@ -232,6 +232,175 @@ const Home = () => {
           ))}
         </div>
       </section>
+       {/* New Games Section */}
+      <section className="container mx-auto px-6 py-16">
+        <div className="mb-12 flex flex-col items-center">
+          <h2 className="text-3xl font-bold text-center">New <span className="text-pink-500">Games</span></h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          {filteredNewGames.length === 0 ? (
+            <div className="col-span-full text-center text-gray-400">No games found.</div>
+          ) : (
+            filteredNewGames.map((game, idx) => (
+              <div
+                key={game.name}
+                className="relative bg-gradient-to-br from-gray-800 via-gray-900 to-purple-900 rounded-2xl overflow-hidden shadow-lg group transition-transform duration-200 hover:scale-105 hover:shadow-2xl flex flex-col"
+              >
+                {/* New badge */}
+                <span className="absolute top-3 left-3 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">NEW</span>
+                {/* Game image */}
+                <img
+                  src={game.image}
+                  alt={game.name}
+                  className="w-full h-48 object-cover object-center group-hover:brightness-90 transition duration-200"
+                />
+                {/* Card content */}
+                <div className="p-5 flex-1 flex flex-col">
+                  <h3 className="text-lg font-bold mb-1 text-center text-white">{game.name}</h3>
+                  <p className="text-pink-400 text-base font-semibold text-center mb-1">{game.price}</p>
+                  <p className="text-gray-400 text-xs mb-2 text-center">{game.genre}</p>
+                  <div className="flex mb-3 justify-center">
+                    {[...Array(5)].map((_, i) =>
+                      i < game.rating ? (
+                        <FaStar key={i} className="text-yellow-400 text-sm" />
+                      ) : (
+                        <FaRegStar key={i} className="text-gray-500 text-sm" />
+                      )
+                    )}
+                  </div>
+                  {/* Icon-only action buttons */}
+                  <div className="mt-auto flex flex-row gap-3 justify-center">
+                    <button
+                      className="bg-pink-600 hover:bg-pink-700 p-2 rounded-full transition text-white text-lg"
+                      title="View Details"
+                      aria-label="View Details"
+                      onClick={() => { setModalGame(game); setShowModal(true); }}
+                    >
+                      <FaEye />
+                    </button>
+                    <button
+                      className="bg-green-600 hover:bg-green-700 p-2 rounded-full transition text-white text-lg"
+                      title="Buy Now"
+                      aria-label="Buy Now"
+                      onClick={() => { setSelectedGame(game); setShowPaymentModal(true); }}
+                    >
+                      <FaCreditCard />
+                    </button>
+                    <button
+                      className="bg-purple-500 hover:bg-purple-700 p-2 rounded-full transition text-white text-lg"
+                      title="Add to Cart"
+                      aria-label="Add to Cart"
+                      onClick={() => setCart(prev => prev.find(item => item.name === game.name) ? prev : [...prev, game])}
+                    >
+                      <FaShoppingCart />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
+
+{/* New Games Videos Section */}
+<section className="container mx-auto px-6 py-16">
+  <div className="mb-12 flex flex-col items-center">
+    <h2 className="text-3xl font-bold text-center">New <span className="text-purple-500">Games Videos</span></h2>
+  </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+    {/* Video 1 */}
+    <div className="rounded-2xl overflow-hidden shadow-lg bg-gray-900">
+      <iframe
+        width="100%"
+        height="215"
+        src="https://www.youtube.com/embed/2gUtfBmw86Y"
+        title="Fortnite Chapter 5 Launch Trailer"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-48 md:h-56 lg:h-60"
+      ></iframe>
+      <div className="p-4 text-center text-white text-sm font-semibold">Fortnite Chapter 5 Launch Trailer</div>
+    </div>
+    {/* Video 2 */}
+    <div className="rounded-2xl overflow-hidden shadow-lg bg-gray-900">
+      <iframe
+        width="100%"
+        height="215"
+        src="https://www.youtube.com/embed/FYH9n37B7Yw"
+        title="Forza Horizon – Official Gameplay"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-48 md:h-56 lg:h-60"
+      ></iframe>
+      <div className="p-4 text-center text-white text-sm font-semibold">Forza Horizon – Official Gameplay</div>
+    </div>
+    {/* Video 3 */}
+    <div className="rounded-2xl overflow-hidden shadow-lg bg-gray-900">
+      <iframe
+        width="100%"
+        height="215"
+        src="https://www.youtube.com/embed/1O6Qstncpnc"
+        title="Call of Duty: Modern Warfare III - Official Launch Trailer"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-48 md:h-56 lg:h-60"
+      ></iframe>
+      <div className="p-4 text-center text-white text-sm font-semibold">COD: Modern Warfare III - Launch Trailer</div>
+    </div>
+    {/* Video 4 */}
+    <div className="rounded-2xl overflow-hidden shadow-lg bg-gray-900">
+      <iframe
+        width="100%"
+        height="215"
+        src="https://www.youtube.com/embed/uHGShqcAHlQ"
+        title="The Legend of Zelda: Tears of the Kingdom - Official Trailer #3"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-48 md:h-56 lg:h-60"
+      ></iframe>
+      <div className="p-4 text-center text-white text-sm font-semibold">Zelda: Tears of the Kingdom - Official Trailer #3</div>
+    </div>
+  </div>
+</section>
+{/* Features */}
+      {/* In the Why Choose GameHub section, add advanced background */}
+      <section className="relative bg-gray-800 py-16 overflow-hidden">
+        {/* Advanced SVG/gradient background */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <div className="w-full h-full bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/80 absolute inset-0" />
+          <svg className="absolute opacity-20 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 320"><path fill="#ec4899" fillOpacity="0.2" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,133.3C840,107,960,85,1080,101.3C1200,117,1320,171,1380,197.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+        </div>
+        <div className="container mx-auto px-6 relative z-10">
+          <h2 className="text-3xl font-bold text-center mb-16">Why Choose <span className="text-purple-500">GameHub</span></h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <FaTrophy className="text-purple-400 text-2xl" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Curated Selection</h3>
+              <p className="text-gray-400">We handpick only the best games from all genres and platforms to ensure quality.</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <FaUsers className="text-purple-400 text-2xl" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Community Driven</h3>
+              <p className="text-gray-400">Join our vibrant community of gamers to share experiences and get recommendations.</p>
+            </div>
+            <div className="text-center">
+              <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <FaHeadset className="text-purple-400 text-2xl" />
+              </div>
+              <h3 className="text-xl font-bold mb-2">24/7 Support</h3>
+              <p className="text-gray-400">Our dedicated support team is always ready to help with any issues or questions.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Featured Games */}
       {/* In the Featured Games section, add advanced background */}
@@ -282,110 +451,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* New Games Section */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="mb-12 flex flex-col items-center">
-          <h2 className="text-3xl font-bold text-center">New <span className="text-pink-500">Games</span></h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Game cards with local images */}
-          {filteredNewGames.length === 0 ? (
-            <div className="col-span-full text-center text-gray-400">No games found.</div>
-          ) : (
-            filteredNewGames.map((game, idx) => (
-              <div key={game.name} className="bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-105 transition flex flex-col">
-                <img src={game.image} alt={game.name} className="w-full h-48 object-cover" />
-                <div className="p-4 flex-1 flex flex-col">
-                  <h3 className="text-lg font-bold mb-1 text-center">{game.name}</h3>
-                  <p className="text-pink-400 text-base font-semibold text-center mb-1">{game.price}</p>
-                  <p className="text-gray-400 text-xs mb-2">{game.genre}</p>
-                  <div className="flex mb-3 justify-center">
-                    {[...Array(5)].map((_, i) => i < game.rating ? <FaStar key={i} className="text-yellow-400 text-sm" /> : <FaRegStar key={i} className="text-gray-500 text-sm" />)}
-                  </div>
-                  <div className="mt-auto flex flex-col gap-2">
-                    <button className="bg-pink-600 hover:bg-pink-700 px-3 py-1 rounded font-medium w-full transition text-sm mb-1">View Details</button>
-                    <button
-                      className="bg-green-600 hover:bg-green-700 px-3 py-1 rounded font-medium w-full transition text-sm"
-                      onClick={() => { setSelectedGame(game); setShowPaymentModal(true); }}
-                    >
-                      Buy Now
-                    </button>
-                    <button
-                      className="bg-purple-500 hover:bg-purple-700 px-3 py-1 rounded font-medium w-full transition text-sm"
-                      onClick={() => setCart(prev => prev.find(item => item.name === game.name) ? prev : [...prev, game])}
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
-
-      {/* Features */}
-      {/* In the Why Choose GameHub section, add advanced background */}
-      <section className="relative bg-gray-800 py-16 overflow-hidden">
-        {/* Advanced SVG/gradient background */}
-        <div className="absolute inset-0 w-full h-full z-0">
-          <div className="w-full h-full bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/80 absolute inset-0" />
-          <svg className="absolute opacity-20 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 320"><path fill="#ec4899" fillOpacity="0.2" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,133.3C840,107,960,85,1080,101.3C1200,117,1320,171,1380,197.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
-        </div>
-        <div className="container mx-auto px-6 relative z-10">
-          <h2 className="text-3xl font-bold text-center mb-16">Why Choose <span className="text-purple-500">GameHub</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="text-center">
-              <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <FaTrophy className="text-purple-400 text-2xl" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Curated Selection</h3>
-              <p className="text-gray-400">We handpick only the best games from all genres and platforms to ensure quality.</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <FaUsers className="text-purple-400 text-2xl" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">Community Driven</h3>
-              <p className="text-gray-400">Join our vibrant community of gamers to share experiences and get recommendations.</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <FaHeadset className="text-purple-400 text-2xl" />
-              </div>
-              <h3 className="text-xl font-bold mb-2">24/7 Support</h3>
-              <p className="text-gray-400">Our dedicated support team is always ready to help with any issues or questions.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       
 
       
-{/* Add About section above the footer */}
-<section className="relative container mx-auto px-6 py-16 overflow-hidden">
-  {/* Advanced SVG/gradient background */}
-  <div className="absolute inset-0 w-full h-full z-0">
-    <div className="w-full h-full bg-gradient-to-br from-pink-900/80 via-gray-900/80 to-purple-900/80 absolute inset-0" />
-    <svg className="absolute opacity-20 w-full h-full" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1440 320"><path fill="#a78bfa" fillOpacity="0.18" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,133.3C840,107,960,85,1080,101.3C1200,117,1320,171,1380,197.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
-  </div>
-  <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-    <div className="flex-1">
-      <h2 className="text-3xl font-bold mb-4 text-purple-500">About GameHub</h2>
-      <p className="text-lg text-gray-300 mb-4">GameHub is your ultimate destination for discovering, playing, and sharing the best games across all platforms. We are passionate about building a vibrant gaming community and providing curated selections, exclusive deals, and 24/7 support for gamers worldwide.</p>
-      <ul className="list-disc list-inside text-gray-400 mb-4">
-        <li>Curated game collections</li>
-        <li>Community-driven reviews</li>
-        <li>Exclusive offers and events</li>
-        <li>Modern, user-friendly experience</li>
-      </ul>
-    </div>
-    <div className="flex-1 flex justify-center">
-      <img src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80" alt="About GameHub" className="rounded-2xl shadow-lg w-80 h-64 object-cover" />
-    </div>
-  </div>
-</section>
+      
+
+      
+
 
       {/* Add Contact Me section below About */}
       <section className="container mx-auto px-6 py-16">
