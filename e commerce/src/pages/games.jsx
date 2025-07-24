@@ -90,17 +90,6 @@ export default function GamesPage() {
         </nav>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1">
-        <h1 className="text-3xl font-extrabold text-center text-purple-400 mb-8 mt-10">Online Games</h1>
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {games.map((game) => (
-              <GameCard key={game.id} {...game} />
-            ))}
-          </div>
-        </div>
-      </main>
 
       {/* Footer */}
       <footer className="bg-gradient-to-r from-gray-950 to-purple-950 py-12 border-t border-gray-800 mt-20">
